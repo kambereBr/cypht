@@ -10,6 +10,7 @@ output_source('contacts');
 setup_base_page('contacts', 'core');
 
 add_handler('contacts', 'load_contacts', true, 'contacts', 'load_user_data', 'after');
+add_handler('contacts', 'check_imported_contacts', true, 'contacts', 'load_contacts', 'after');
 add_output('contacts', 'contacts_content_start', true, 'contacts', 'content_section_start', 'after');
 add_output('contacts', 'contacts_list', true, 'contacts', 'contacts_content_start', 'after');
 add_output('contacts', 'contacts_content_end', true, 'contacts', 'contacts_list', 'after');
@@ -37,12 +38,17 @@ setup_base_ajax_page('ajax_delete_contact', 'core');
 add_handler('ajax_delete_contact', 'load_contacts', true, 'contacts', 'load_user_data', 'after');
 add_handler('ajax_delete_contact', 'save_user_data', true, 'core', 'language', 'after');
 
+setup_base_page('export_contact', 'core');
+add_handler('export_contact', 'load_contacts', true, 'contacts', 'load_user_data', 'after');
+add_handler('export_contact', 'process_export_contacts', true, 'contacts', 'load_contacts', 'after');
+
 return array(
     'allowed_pages' => array(
         'contacts',
         'ajax_add_contact',
         'ajax_delete_contact',
-        'ajax_autocomplete_contact'
+        'export_contact',
+        'ajax_autocomplete_contact',
     ),
     'allowed_post' => array(
         'contact_email' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
@@ -53,16 +59,19 @@ return array(
         'edit_contact' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
         'add_contact' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
         'contact_source' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
-        'contact_type' => FILTER_SANITIZE_FULL_SPECIAL_CHARS
+        'contact_type' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'import_contact' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     ),
     'allowed_get' => array(
         'contact_id' => FILTER_VALIDATE_INT,
         'contact_page' => FILTER_VALIDATE_INT,
         'contact_type' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
         'contact_source' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
+        'import_contact' => FILTER_SANITIZE_FULL_SPECIAL_CHARS,
     ),
     'allowed_output' => array(
         'contact_deleted' => array(FILTER_VALIDATE_INT, false),
+        'contact_imported' => array(FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY),
         'contact_suggestions' => array(FILTER_SANITIZE_FULL_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY)
     ),
 );
